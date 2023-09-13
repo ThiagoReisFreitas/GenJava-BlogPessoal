@@ -35,6 +35,7 @@ public class UsuarioService {
 		usuario.setSenha(criptografarSenha(usuario.getSenha()));
 		
 		return Optional.of(usuarioRepository.save(usuario));
+
 	}
 	
 	public Optional<Usuario> atualizarUsuario(Usuario usuario) {
@@ -55,15 +56,12 @@ public class UsuarioService {
 	}
 	
 	public Optional<UsuarioLogin> autenticarUsuario(Optional<UsuarioLogin> usuarioLogin){
-		//Gera o Objeto de autentificação
+
 		var credenciais = new UsernamePasswordAuthenticationToken(usuarioLogin.get().getUsuario(), usuarioLogin.get().getSenha());
 		
-		//Autentica o Usuario
 		Authentication authentication = authenticationManager.authenticate(credenciais);
 		
-		//Se a autenticação foi efetuada com sucesso
 		if (authentication.isAuthenticated()) {
-//			Busca os dados do usuario
 			
 			Optional<Usuario> usuario = usuarioRepository.findByUsuario(usuarioLogin.get().getUsuario());
 			
@@ -74,6 +72,8 @@ public class UsuarioService {
 				usuarioLogin.get().setFoto(usuario.get().getFoto());
 				usuarioLogin.get().setToken(gerarToken(usuarioLogin.get().getUsuario()));
 				usuarioLogin.get().setSenha("");
+
+				return usuarioLogin;
 			}
 		}
 		return Optional.empty();
